@@ -1,0 +1,136 @@
+import datetime
+
+class Libro:
+    # Atributo de clase
+    total_libros = 0
+
+    def __init__(self, titulo, autor, publicado):
+        # Atributos de instancia
+        self.titulo = titulo
+        self.autor = autor
+        self.publicado = publicado
+        self.prestado = False
+        self.prestamos = 0  # Contador de veces que se ha prestado
+        self.fecha_prestamo = None  # Fecha de último préstamo
+
+        # Incrementar contador total de libros cada vez que se crea una instancia
+        Libro.total_libros += 1
+
+    # Método para prestar el libro
+    def prestar(self):
+        if not self.prestado:
+            self.prestado = True
+            self.prestamos += 1
+            self.fecha_prestamo = datetime.date.today()
+            return f'El libro "{self.titulo}" ha sido prestado el {self.fecha_prestamo}.'
+        else:
+            return f'El libro "{self.titulo}" ya está prestado.'
+
+    # Método para devolver el libro
+    def devolver(self):
+        if self.prestado:
+            self.prestado = False
+            return f'El libro "{self.titulo}" ha sido devuelto.'
+        else:
+            return f'El libro "{self.titulo}" no estaba prestado.'
+
+    # Método para obtener el estado del libro
+    def estado(self):
+        estado_prestamo = 'prestado' if self.prestado else 'disponible'
+        info_prestamos = f"Se ha prestado {self.prestamos} veces."
+        if self.fecha_prestamo:
+            info_prestamos += f" Último préstamo el {self.fecha_prestamo}."
+        return f'El libro "{self.titulo}" de {self.autor}, publicado en {self.publicado}, está {estado_prestamo}. {info_prestamos}'
+
+    # Método de clase para obtener el total de libros
+    @classmethod
+    def total_de_libros(cls):
+        return f'El total de libros en la biblioteca es: {cls.total_libros}.'
+
+# Lista de libros preexistentes de J.R.R. Tolkien
+libros_preexistentes = [
+    Libro("El hobbit", "J.R.R. Tolkien", 1937),
+    Libro("El señor de los anillos: La comunidad del anillo", "J.R.R. Tolkien", 1954),
+    Libro("El señor de los anillos: Las dos torres", "J.R.R. Tolkien", 1954),
+    Libro("El señor de los anillos: El retorno del rey", "J.R.R. Tolkien", 1955),
+    Libro("El Silmarillion", "J.R.R. Tolkien", 1977),
+    Libro("Los hijos de Húrin", "J.R.R. Tolkien", 2007),
+    Libro("Cuentos inconclusos de Númenor y la Tierra Media", "J.R.R. Tolkien", 1980),
+    Libro("La caída de Gondolin", "J.R.R. Tolkien", 2018),
+    Libro("Beren y Lúthien", "J.R.R. Tolkien", 2017),
+    Libro("La balada de Leithian", "J.R.R. Tolkien", 2009),
+    Libro("Las aventuras de Tom Bombadil", "J.R.R. Tolkien", 1962),
+    Libro("Roverandom", "J.R.R. Tolkien", 1998),
+    Libro("El herrero de Wootton Mayor", "J.R.R. Tolkien", 1967),
+    Libro("Cartas de Papá Noel", "J.R.R. Tolkien", 1976),
+    Libro("La última canción de Bilbo", "J.R.R. Tolkien", 1974),
+    Libro("La historia de Kullervo", "J.R.R. Tolkien", 2015),
+    Libro("El árbol y la hoja", "J.R.R. Tolkien", 1964),
+    Libro("Egidio, el granjero de Ham", "J.R.R. Tolkien", 1949)
+]
+
+# Función para agregar un nuevo libro
+def agregar_libro():
+    titulo = input("Ingrese el título del nuevo libro: ")
+    autor = input("Ingrese el autor del nuevo libro: ")
+    publicado = input("Ingrese el año de publicación del nuevo libro: ")
+    try:
+        publicado = int(publicado)
+        nuevo_libro = Libro(titulo, autor, publicado)
+        libros_preexistentes.append(nuevo_libro)
+        print(f'Se ha agregado el libro "{titulo}" correctamente.')
+    except ValueError:
+        print("El año de publicación debe ser un número válido.")
+
+# Función para mostrar la lista de libros disponibles
+def mostrar_libros():
+    print("Libros disponibles:")
+    for i, libro in enumerate(libros_preexistentes, 1):
+        print(f"{i}. {libro.titulo}")
+
+# Consultar el estado de un libro ingresado por el usuario
+def consultar_estado():
+    while True:
+        opcion = input("Ingrese el número del libro que desea consultar, prestar o devolver (o escriba 'salir' para salir): ")
+        
+        if opcion.lower() == 'salir':
+            print("¡Hasta luego!")
+            break
+        
+        try:
+            indice = int(opcion) - 1
+            if 0 <= indice < len(libros_preexistentes):
+                libro = libros_preexistentes[indice]
+                print(libro.estado())
+                accion = input("¿Desea prestar o devolver este libro? (prestar/devolver): ").lower()
+                if accion == "prestar":
+                    print(libro.prestar())
+                elif accion == "devolver":
+                    print(libro.devolver())
+                else:
+                    print("Acción no reconocida. Por favor, ingrese 'prestar' o 'devolver'.")
+            else:
+                print("Por favor, ingrese un número válido.")
+        except ValueError:
+            print("Por favor, ingrese un número válido.")
+
+# Menú principal
+while True:
+    print("\n--- Biblioteca ---")
+    print("1. Mostrar libros disponibles")
+    print("2. Consultar estado de un libro")
+    print("3. Agregar nuevo libro")
+    print("4. Salir")
+    opcion = input("Seleccione una opción: ")
+
+    if opcion == "1":
+        mostrar_libros()
+    elif opcion == "2":
+        consultar_estado()
+    elif opcion == "3":
+        agregar_libro()
+    elif opcion == "4":
+        print("¡Hasta luego!")
+        break
+    else:
+        print("Opción no válida. Por favor, seleccione una opción del menú.")
